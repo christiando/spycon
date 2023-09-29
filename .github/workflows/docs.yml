@@ -22,6 +22,8 @@ jobs:
           python -m pip install --upgrade pip
           pip install sphinx recommonmark httplib2 myst_parser nbsphinx sphinx_rtd_theme pandoc ipython ipykernel
           pip install linkify-it-py sphinx-book-theme sphinx-autodoc-typehints
+          pip install -r requirements.txt
+          pip install -e .
       - name: Sphinx build
         run: |
           ipython kernel install --name "python3" --user
