@@ -18,6 +18,7 @@ class CoincidenceIndex(SpikeConnectivityInference):
 
     Args:
         params (dict, optional): Parameters for the CI method:
+
             - 'binsize' (float): Time step (in seconds) used for time-discretization. Default is 0.4e-3.
             - 'syn_tau' (float): Lag on the cross-correlogram (CCG) taken into account for the denominator in seconds. Default is 0.6e-3.
             - 'ccg_tau' (float): The maximum lag for which the CCG is calculated in seconds. Default is 50e-3.
@@ -25,9 +26,6 @@ class CoincidenceIndex(SpikeConnectivityInference):
             - 'jitter_factor' (int): Maximum number of time bins the spikes can be jittered. Default is 7.
             - 'num_surrogates' (int): Number of surrogates to be created. Default is 50.
             - 'jitter' (bool): If True, spikes are uniformly jittered; otherwise, spikes are randomly selected from the population. Default is False.
-
-    Returns:
-        None
     """
 
     def __init__(self, params: dict = {}):

@@ -14,14 +14,12 @@ class directed_STTC(SpikeConnectivityInference):
 
     Args:
         params (dict, optional): Parameters for the STTC method:
+
             - 'delta_t' (float): Synaptic time window in seconds. Default is 7e-3.
             - 'jitter_factor' (int): Maximum number of time bins the spikes can be jittered. Default is 7.
             - 'num_surrogates' (int): Number of surrogates to be created. Default is 50.
             - 'jitter' (bool): If True, spikes are uniformly jittered; otherwise, spikes are randomly selected from the population. Default is False.
             - 'alpha' (float): Threshold. Default is 1e-3.
-
-    Returns:
-        None
     """
 
     def __init__(self, params: dict = {}):

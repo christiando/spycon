@@ -21,16 +21,13 @@ class TE_IDTXL(SpikeConnectivityInference):
 
     Args:
         params (dict): A dictionary containing the following parameters:
+
             - 'binsize' (float): Time step (in seconds) used for time-discretization. Default is 5e-3.
             - 'k' (int): Length of history embedding. Default is 2.
             - 'alpha' (float): Threshold. Default is 1e-2.
             - 'jitter_factor' (int): Maximum number of time bins for spike jittering. Default is 7.
             - 'num_surrogates' (int): Number of surrogates to be created. Default is 50.
             - 'jitter' (bool): If True, spikes are uniformly jittered; otherwise, spikes are randomly selected from the population. Default is False.
-
-    Returns:
-        None
-
     """
 
     def __init__(self, params: dict = {}):
