@@ -334,6 +334,7 @@ class GLMPP(SpikeConnectivityInference):
 
     Args:
         params (dict): A dictionary containing the following parameters:
+
             - 'tau' (float): Time constant of the history kernel. Default is 5e-3.
             - 'alpha' (float): Threshold. Default is 1e-2.
 

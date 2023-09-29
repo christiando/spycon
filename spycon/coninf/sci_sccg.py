@@ -15,13 +15,14 @@ class Smoothed_CCG(SpikeConnectivityInference):
     English, Daniel Fine, et al. "Pyramidal cell-interneuron circuit architecture and dynamics in hippocampal networks." Neuron 96.2 (2017): 505-520.
 
     Args:
-        params (dict):
-        'binsize': Time step (in seconds) that is used for time-discretization. (Default=.4e-3)
-        'hf': Half fraction of the Gaussian kernel at zero lag (0<=hf<=1). (Default=0.6)
-        'gauss_std': Standard deviation of Gaussian kernel (in seconds). (Default=0.01)
-        'syn_window': Time window, which the CCG is check for peaks (in seconds). (Default=(.8e-3,5.8e-3))
-        'ccg_tau': The maximum lag which the CCG is calculated for (in seconds). (Default=50e-3)
-        'alpha': Value, that is used for thresholding p-values (0<alpha<1). (Default=.01)
+        params (dict): A dictionary containing the following parameters:
+
+            - 'binsize': Time step (in seconds) that is used for time-discretization. (Default=.4e-3)
+            - 'hf': Half fraction of the Gaussian kernel at zero lag (0<=hf<=1). (Default=0.6)
+            - 'gauss_std': Standard deviation of Gaussian kernel (in seconds). (Default=0.01)
+            - 'syn_window': Time window, which the CCG is check for peaks (in seconds). (Default=(.8e-3,5.8e-3))
+            - 'ccg_tau': The maximum lag which the CCG is calculated for (in seconds). (Default=50e-3)
+            - 'alpha': Value, that is used for thresholding p-values (0<alpha<1). (Default=.01)
     """
 
     def __init__(self, params: dict = {}):

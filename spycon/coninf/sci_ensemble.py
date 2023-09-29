@@ -148,14 +148,13 @@ class NNEnsemble(SpikeConnectivityInference):
     Args:
         con_inf (SpikeConnectivityInference): Connectivity method that should be corrected.
         params (dict): Parameter dictionary with the following keys:
+
             - 'name' (str): Name to identify the model and load if already trained.
             - 'model_path' (str): Path to the saved model.
             - 'threshold' (float): Threshold value between 0 and 1 for thresholding the network output. Default is 0.5.
             - 'con_inf_dict' (dict): Dictionary with the connectivity inference methods. Default is an empty dictionary ({}).
-        save_training_models (bool, optional): Whether the models during training should be saved. Default is False.
 
-    Returns:
-        None
+        save_training_models (bool, optional): Whether the models during training should be saved. Default is False.
     """
 
     def __init__(self, params: dict, save_training_models: bool = False):

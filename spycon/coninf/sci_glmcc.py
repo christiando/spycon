@@ -24,15 +24,13 @@ class GLMCC(SpikeConnectivityInference):
 
     Args:
         params (dict): Parameter dictionary with the following keys:
+
             - 'binsize' (float): Time step in seconds used for time discretization. Default is 1e-3.
             - 'ccg_tau' (float): The maximum lag for which the cross-correlogram (CCG) is calculated, in seconds. Default is 50e-3.
             - 'syn_delay' (float): Assumed synaptic delay in seconds. Default is 3e-3.
             - 'tau' (list of float): Time constants tau for exponential decay in seconds. Default is [1e-3, 1e-3].
             - 'beta' (float): Corresponds to the penalty term (gamma in the paper) for slow trend fitting. A larger beta results in a higher penalty. Default is 4000.
             - 'alpha' (float): Threshold. Default is 1e-2.
-
-    Returns:
-        None
     """
 
     def __init__(self, params: dict = {}):
