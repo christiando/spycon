@@ -29,12 +29,12 @@ spycon_result.draw_graph()                 # Draw inferred graph
 Clone the repository into a directory and go into the folder. Just do the following
 
 ```bash
-pip install git+https://gitlab.renkulab.io/christian.donner/spycon
+pip install git+https://github.com/christiando/spycon
 ```
 
 For code development do
 ```bash
-git clone https://gitlab.renkulab.io/christian.donner/spycon.git
+git clone https://github.com/christiando/spycon.git
 cd gaussian-toolbox/
 pip install -r requirements.txt
 pip install -e .
