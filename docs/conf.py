@@ -46,7 +46,7 @@ html_static_path = ["_static"]
 html_theme_options = {
     "collapse_navigation": True,
     "navigation_depth": 2,
-    "repository_url": "https://gitlab.renkulab.io/christian.donner/spycon",
+    "repository_url": "https://github.com/christiando/spycon",
     "use_repository_button": True,
     "show_toc_level": 2,
 }
@@ -66,10 +66,11 @@ myst_enable_extensions = [
     "substitution",
     "tasklist",
 ]
-html_logo = "_static/spycon.png"
+html_logo = "_static/spycon_logo.png"
 
 templates_path = ["_templates"]
 exclude_patterns = []
+nbsphinx_execute = "never"
 
 source_suffix = {".rst": "restructuredtext", ".md": "markdown"}
 

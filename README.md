@@ -1,4 +1,9 @@
+<p align="center">
+  <img src="docs/_static/spycon_logo.png" />
+</p>
+
 # spycon: A toolbox for benchmarking neuronal connectivity inference
+
 ## Introduction
 
 Numerous methods have been proposed that attempt to infer neuronal connectivity from parallel recorded spike trains. 
@@ -6,7 +11,7 @@ Here we provide the `spycon` framework, that aims at making a comparable framewo
 connectivity inference algorithms, and a template, such that costum algorithms can be intergrated into `spycon`. `spycon`
 then provides a unified output of the methods, that methods can be benchmarked on different datasets.
 
-[**Basic Usage**](#basics) | [**Install guide**](#installation) | [**Citing**](#citation) | [**Documentation**]()
+[**Basic Usage**](#basics) | [**Install guide**](#installation) | [**Citing**](#citation) | [**Documentation**](https://christiando.github.io/spycon/)
 
 ## Get started
 
