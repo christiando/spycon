@@ -37,11 +37,16 @@ class MyConnectivityMethod(SpikeConnectivityInference):
             pairs (numpy.ndarray): Array of [pre, post] pair node IDs, for which inference will be done.
 
         Returns:
-            tuple: A tuple containing four arrays:
-                - nodes (numpy.ndarray): [number_of_nodes], with the node labels.
-                - edges (numpy.ndarray): [number_of_edges, 2], where the first column is the outgoing node, and the second is the incoming node.
-                - weights (numpy.ndarray): [number_of_edges], with graded strength of connection.
-                - stats (numpy.ndarray): [number_of_edges, 3], containing a fully connected graph. The first column represents outgoing nodes, the second represents incoming nodes, and the third row contains the statistic used to decide whether it is an edge or not. A higher value indicates a more probable edge.
+            tuple: A tuple containing the following elements:
+                1) nodes (numpy.ndarray): An array of node labels with shape [number_of_nodes].
+                2) weights (numpy.ndarray): An array of graded strengths of connections with shape [number_of_edges].
+                3) stats (numpy.ndarray): A 2D array representing a fully connected graph with shape [number_of_edges, 3].
+                The columns are as follows:
+                    - The first column represents outgoing nodes.
+                    - The second column represents incoming nodes.
+                    - The third column contains the statistic used to decide whether it is an edge or not.
+                        A higher value indicates that an edge is more probable.
+                4) threshold (float): A float value that considers an edge to be a connection if stats > threshold.
         """
 
         # Here has to happen the magic!
@@ -73,4 +78,4 @@ class MyConnectivityMethod(SpikeConnectivityInference):
 
         # Here can be implemented a parallel version of your algorithm. If you can't/don't want to do it, just delete it.
 
-        return nodes, edges, weights, stats
+        return nodes, weights, stats, threshold
