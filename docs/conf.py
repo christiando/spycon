@@ -66,10 +66,11 @@ myst_enable_extensions = [
     "substitution",
     "tasklist",
 ]
-html_logo = "_static/spycon.png"
+html_logo = "_static/spycon_logo.png"
 
 templates_path = ["_templates"]
 exclude_patterns = []
+nbsphinx_execute = "never"
 
 source_suffix = {".rst": "restructuredtext", ".md": "markdown"}
 
