@@ -1,0 +1,4 @@
+MyTest.npz
+docs/_build/
+*.pyc
+spycon.egg-info/

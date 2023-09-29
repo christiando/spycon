@@ -52,7 +52,7 @@ class SpikeConnectivityResult(object):
 
         self.threshold = new_threshold
         self.edges = self.stats[self.stats[:, 2] > self.threshold, :2]
-        self.weights = self.all_weights[self.stats[:, 2] > self.threshold, :2]
+        self.weights = self.all_weights[self.stats[:, 2] > self.threshold]
         if len(self.edges) == 0:
             self.edges = numpy.zeros((0, 2))
         if len(self.weights) == 0:

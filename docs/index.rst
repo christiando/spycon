@@ -12,6 +12,7 @@
    
    notebooks/tutorial
    notebooks/create_test
+   notebooks/create_spycon_method
    notebooks/use_eann
    notebooks/train_eann
 
