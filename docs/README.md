@@ -11,12 +11,12 @@ Here we provide the `spycon` framework, that aims at making a comparable framewo
 connectivity inference algorithms, and a template, such that costum algorithms can be intergrated into `spycon`. `spycon`
 then provides a unified output of the methods, that methods can be benchmarked on different datasets.
 
-[**Basic Usage**](#get) | [**Install guide**](#installation) | [**Citing**](#citation) | [**Documentation**](https://christiando.github.io/spycon/)
+[**Quickstart**](#quickstart) | [**Install guide**](#installation) | [**Citing**](#citation) | [**Documentation**](https://christiando.github.io/spycon/)
 
-## Get started
+## Quickstart
 
 You can either install `spycon` locally. If you just want to try it out quickly, you can also start and interactive 
-session on [renku](https://renkulab.io/projects/christian.donner/spycon) and directly start coding. Check the [`notebooks`](notebooks) folder for some examples.
+session on [renku](https://renkulab.io/projects/christian.donner/spycon) and directly start coding. Check the `notebooks` folder for some examples.
 
 Here is a simple example, that shows how easy it is to do connectivity inference.
 
@@ -40,7 +40,7 @@ pip install git+https://github.com/christiando/spycon
 For code development do
 ```bash
 git clone https://github.com/christiando/spycon.git
-cd gaussian-toolbox/
+cd spycon/
 pip install -r requirements.txt
 pip install -e .
 ```
