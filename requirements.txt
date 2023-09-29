@@ -1,0 +1,18 @@
+numpy
+scipy
+matplotlib
+pandas
+scikit-learn
+networkx
+quantities
+neo
+elephant==0.13.0
+tensorflow
+pyinform==0.2.0
+shap
+seaborn
+torch
+-e git+https://github.com/pwollstadt/IDTxl.git#egg=idtxl
+JPype1==0.6.3
+prettytable
+ecos

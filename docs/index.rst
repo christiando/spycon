@@ -1,0 +1,23 @@
+.. spycon documentation master file, created by
+   sphinx-quickstart on Wed Sep 27 14:12:16 2023.
+   You can adapt this file completely to your liking, but it should at least
+   contain the root `toctree` directive.
+
+.. include:: README
+   :parser: myst_parser.sphinx_
+
+.. toctree::
+   :maxdepth: 1
+   :caption: Contents:
+   
+   notebooks/tutorial
+   notebooks/create_test
+   notebooks/use_eann
+   notebooks/train_eann
+
+.. toctree::
+   :maxdepth: 2
+   :caption: API:
+   
+   utilities
+   inference

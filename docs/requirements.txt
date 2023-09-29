@@ -1,0 +1,12 @@
+sphinx
+recommonmark
+httplib2
+myst_parser
+nbsphinx
+sphinx_rtd_theme
+pandoc
+ipython
+ipykernel
+linkify-it-py
+sphinx-book-theme
+sphinx-autodoc-typehints
