@@ -1,12 +1,11 @@
 from spycon.spycon_inference import SpikeConnectivityInference
-from spycon.spycon_result import SpikeConnectivityResult
-from spycon.spycon_tests import ConnectivityTest, load_test
-from scipy.stats import mstats
+from spycon.spycon_tests import load_test
 from torch import nn
 import torch
 from torch.utils.data import DataLoader
 from tqdm import tqdm
 import numpy, pandas
+import pickle
 
 device = "cuda" if torch.cuda.is_available() else "cpu"
 print("Using {} device".format(device))
@@ -101,7 +100,7 @@ class Dataset(torch.utils.data.Dataset):
 
 
 class ConnectivityEnsemble(nn.Module):
-    def __init__(self, num_inputs: int, hidden_units: list = [10]):
+    def __init__(self, num_inputs: int, hidden_units: list):
         """Implements a neural network ensemble.
 
         Args:
@@ -250,6 +249,9 @@ def train_network(
     labels: numpy.ndarray,
     model_path: str = "../data/nn_models/",
     save_training_models: bool = False,
+    hidden_units: list = [
+        10,
+    ],
 ):
     """Train the neural network ensemble.
 
@@ -259,7 +261,7 @@ def train_network(
         model_path (str): Path to folder where model is saved. Defaults to "../data/nn_models/".
         save_training_models (bool): Save models during training. Defaults to False.
     """
-    nn_model = ConnectivityEnsemble(input_features.shape[1])
+    nn_model = ConnectivityEnsemble(input_features.shape[1], hidden_units)
     print("##### Loads Training Dataset #####")
     # X, y = _load_train_dataset()
     X = torch.tensor(input_features, dtype=torch.float32)
@@ -275,8 +277,21 @@ def train_network(
         _train(dataloader, nn_model, loss_fn, optimizer)
         if save_training_models and t % 10 == 0:
             torch.save(nn_model.state_dict(), f"{model_path}_epoch_{t}.net")
+    pkl_filename = model_path + model_name + ".pkl"
     print("##### Save trained model #####")
-    torch.save(nn_model.state_dict(), model_path + model_name + ".net")
+    with open(pkl_filename, "wb") as f:
+        pickle.dump(
+            {
+                "params": nn_model.state_dict(),
+                "hidden_units": hidden_units,
+                "num_inputs": input_features.shape[1],
+                "model_name": model_name,
+            },
+            f,
+        )
+    # torch.save(nn_model.state_dict(), model_path + model_name + ".net")
+    # save hidden structure
+
     # numpy.savez(model_path + "_trainset.npz", X=X.numpy(), y=y.numpy())
 
 
@@ -311,16 +326,24 @@ class NNEnsemble(SpikeConnectivityInference):
         if len(self.con_inf_dict) == 0:
             raise RuntimeError("No original inference method specified!")
         self.method = "NNEnsemble"
-        self.nn_model = ConnectivityEnsemble(
-            int(len(self.con_inf_dict) * 2)
-        )  # .to(device)
+        # .to(device)
         model_path = self.params.get("model_path", self.default_params["model_path"])
         name = self.params.get("name", self.default_params["name"])
+        # self.nn_model = ConnectivityEnsemble(
+        #        int(len(self.con_inf_dict) * 2)
+        #    )
         if name is None:
             raise RuntimeError("No model name specified!")
         self.model_path = model_path + name
         try:
-            self.nn_model.load_state_dict(torch.load(self.model_path + ".net"))
+            pkl_filename = model_path + name + ".pkl"
+            with open(pkl_filename, "rb") as f:
+                pkl_data = pickle.load(f)
+            num_inputs = pkl_data["num_inputs"]
+            hidden_units = pkl_data["hidden_units"]
+            self.nn_model = ConnectivityEnsemble(num_inputs, hidden_units)
+            self.nn_model.load_state_dict(pkl_data["params"])
+            # self.nn_model.load_state_dict(torch.load(self.model_path + ".net"))
             print("##### Trained model successfully loaded #####")
         except FileNotFoundError:
             print("##### Could not find trained model. #####")
