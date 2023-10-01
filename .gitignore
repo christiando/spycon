@@ -2,3 +2,5 @@ MyTest.npz
 docs/_build/
 *.pyc
 spycon.egg-info/
+spycon/__pycache__/
+spycon/.ipynb_checkpoints/
