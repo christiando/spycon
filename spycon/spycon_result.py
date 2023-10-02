@@ -133,7 +133,7 @@ class SpikeConnectivityResult(object):
                 cax=cax,
                 label="stats",
             )
-        elif graph_type is "weighted":
+        elif graph_type == "weighted":
             cmap = pyplot.get_cmap("BrBG")
             weights = list(nx.get_edge_attributes(graph, "weight").values())
             max_weight = numpy.amax(numpy.absolute(weights))

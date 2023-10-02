@@ -6,6 +6,7 @@ from torch.utils.data import DataLoader
 from tqdm import tqdm
 import numpy, pandas
 import pickle
+import spycon
 
 device = "cuda" if torch.cuda.is_available() else "cpu"
 print("Using {} device".format(device))
@@ -215,7 +216,7 @@ def load_train_dataset(
         Input feautures and labels for training the network.
     """
     X, y = None, None
-    for spycon_test in spycon_tests:
+    for spycon_test in tqdm(spycon_tests):
         spycon_result_dict = {}
         for con_inf_name, con_inf in con_inf_dict.items():
             spycon_result = con_inf.infer_connectivity(
@@ -247,7 +248,7 @@ def train_network(
     model_name: str,
     input_features: numpy.ndarray,
     labels: numpy.ndarray,
-    model_path: str = "../data/nn_models/",
+    model_path: str = None,
     save_training_models: bool = False,
     hidden_units: list = [
         10,
@@ -261,6 +262,9 @@ def train_network(
         model_path (str): Path to folder where model is saved. Defaults to "../data/nn_models/".
         save_training_models (bool): Save models during training. Defaults to False.
     """
+    if model_path is None:
+        model_path = spycon.__path__[0] + "/../data/nn_models/"
+    spycon.__path__
     nn_model = ConnectivityEnsemble(input_features.shape[1], hidden_units)
     print("##### Loads Training Dataset #####")
     # X, y = _load_train_dataset()
@@ -276,7 +280,17 @@ def train_network(
         # print(f"Epoch {t+1}\n-------------------------------")
         _train(dataloader, nn_model, loss_fn, optimizer)
         if save_training_models and t % 10 == 0:
-            torch.save(nn_model.state_dict(), f"{model_path}_epoch_{t}.net")
+            pkl_filename = f"{model_path}{model_name}_epoch{t}.pkl"
+            with open(pkl_filename, "wb") as f:
+                pickle.dump(
+                    {
+                        "params": nn_model.state_dict(),
+                        "hidden_units": hidden_units,
+                        "num_inputs": input_features.shape[1],
+                        "model_name": model_name,
+                    },
+                    f,
+                )
     pkl_filename = model_path + model_name + ".pkl"
     print("##### Save trained model #####")
     with open(pkl_filename, "wb") as f:
@@ -315,7 +329,7 @@ class NNEnsemble(SpikeConnectivityInference):
         super().__init__(params)
         self.default_params = {
             "name": None,
-            "model_path": "../data/nn_models/",
+            "model_path": spycon.__path__[0] + "/../data/nn_models/",
             "threshold": 0.66,
             "con_inf_dict": {},
             "save_test": True,
@@ -405,7 +419,7 @@ class NNEnsemble(SpikeConnectivityInference):
         y_score = softmax(self.nn_model(X_valid)).detach().numpy()
         stats = numpy.empty((pairs_valid.shape[0], 3))
         stats[:, :2] = pairs_valid
-        stats[:, 2] = numpy.amax([y_score[:, 1], y_score[:, 2]])
+        stats[:, 2] = numpy.maximum(y_score[:, 1], y_score[:, 2])
         weights = []
         spycon_result = list(spycon_result_dict.values())[0]
         for ipair, edge in enumerate(pairs_valid):

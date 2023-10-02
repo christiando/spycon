@@ -6,5 +6,16 @@ from .sci_idtxl import TE_IDTXL
 from .sci_glmpp import GLMPP
 from .sci_glmcc import GLMCC
 from .sci_ensemble import NNEnsemble
+from spycon.coninf import setup_ensemble
 
-__all__ = ['CoincidenceIndex', 'Smoothed_CCG', 'directed_STTC', 'TE_PyInform', 'TE_IDTXL', 'GLMPP', 'GLMCC', 'NNEnsemble']
+__all__ = [
+    "CoincidenceIndex",
+    "Smoothed_CCG",
+    "directed_STTC",
+    "TE_PyInform",
+    "TE_IDTXL",
+    "GLMPP",
+    "GLMCC",
+    "NNEnsemble",
+    "setup_ensemble",
+]
