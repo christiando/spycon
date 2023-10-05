@@ -107,7 +107,6 @@ class UnitModel_VI:
                     """+----------------+\n|Iterations   %03d|\n|Conv-crit %.4f|\n+----------------+"""
                     % (self.num_iters, cur_conv_crit)
                 )
-        print(self.lb_list)
 
     def initialize_q1(self):
         self.Sigma1 = self.Sigma0
@@ -479,7 +478,6 @@ class GLMPP(SpikeConnectivityInference):
         T = times_tmp[-1]
         history = [times_tmp, ids_tmp]
         unit_times = times_tmp[ids == id1]
-        print(id1)
         unit_vi = UnitModel_VI(nidx, T, unit_times, history, numpy.unique(ids_tmp))
         unit_vi.run(update_hyperparams=False)
         weights = unit_vi.mu1[1:, 0]
@@ -517,6 +515,5 @@ class GLMPP(SpikeConnectivityInference):
         T = times_tmp[-1]
         history = [times_tmp, ids_tmp]
         unit_times = times_tmp[ids == id1]
-        print(id1)
         unit_vi = UnitModel_VI(nidx, T, unit_times, history, numpy.unique(ids_tmp))
         return unit_vi

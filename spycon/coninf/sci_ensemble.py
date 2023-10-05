@@ -72,7 +72,6 @@ def create_dataset(
         X_dict[con_inf_name] = numpy.concatenate(X_tmp)
     pair_ids = numpy.concatenate(pair_ids)
     X = pandas.DataFrame(numpy.hstack(list(X_dict.values())), columns=feature_names)
-    print(feature_names)
     if labels is not None:
         y = numpy.concatenate(y)
         return X, y, pair_ids
@@ -199,6 +198,7 @@ def train_network(
     hidden_units: list = [
         10,
     ],
+    num_epochs: int = 1000,
 ):
     """Train the neural network ensemble.
 
@@ -218,8 +218,7 @@ def train_network(
     optimizer = torch.optim.SGD(nn_model.parameters(), lr=1e-3)
     dataloader = DataLoader(dataset, 200)
     print("##### Model training #####")
-    epochs = 10000
-    for t in tqdm(range(epochs)):
+    for t in tqdm(range(num_epochs)):
         # print(f"Epoch {t+1}\n-------------------------------")
         _train(dataloader, nn_model, loss_fn, optimizer)
         if save_training_models and t % 10 == 0:

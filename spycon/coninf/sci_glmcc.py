@@ -81,7 +81,6 @@ class GLMCC(SpikeConnectivityInference):
         num_connections_to_test = len(nodes) * (len(nodes) - 1)
 
         conn_count = 0
-        print_step = numpy.amin([1000, numpy.round(num_connections_to_test / 10.0)])
         pairs_already_computed = numpy.empty((0, 2))
 
         for pair in tqdm(pairs):
