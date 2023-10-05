@@ -53,7 +53,7 @@ input_features, labels = coninf.sci_ensemble.load_train_dataset(
 )
 # Save the training set
 numpy.savez(model_path + model_name + "_trainset.npz", X=input_features, y=labels)
-# Load the training set
+# Load the training set if already precomputed
 # trainset = numpy.load(model_path + model_name + "_trainset.npz")
 # input_features = trainset["X"]
 # labels = trainset["y"]
