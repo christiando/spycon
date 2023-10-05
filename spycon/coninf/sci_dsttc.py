@@ -186,7 +186,7 @@ class directed_STTC(SpikeConnectivityInference):
                 )
             STTC_H0[ishuffle] = self._compute_directed_STTC(timesB_shuffled, timesA, T)
         STTC_BA = self._compute_directed_STTC(timesB, timesA, T)
-        mu_H0, std_H0 = numpy.mean(STTC_H0), numpy.std(STTC_H0)
+        mu_H0, std_H0 = numpy.mean(STTC_H0), numpy.amax([numpy.std(STTC_H0), 1e-10])
 
         zval_BA = numpy.abs(STTC_BA - mu_H0) / std_H0
         STTC_H0 = numpy.empty(num_surrogates)

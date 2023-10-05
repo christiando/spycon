@@ -112,7 +112,7 @@ class SpikeConnectivityResult(object):
                 graph, ax=ax, with_labels=True, node_size=500, node_color="C1"
             )
         elif graph_type == "stats":
-            cmap = pyplot.get_cmap("inferno")
+            cmap = pyplot.get_cmap("inferno_r")
             weights = list(nx.get_edge_attributes(graph, "weight").values())
             min_weight, max_weight = numpy.amin(weights), numpy.amax(weights)
             nx.draw_circular(
@@ -133,7 +133,7 @@ class SpikeConnectivityResult(object):
                 cax=cax,
                 label="stats",
             )
-        elif graph_type is "weighted":
+        elif graph_type == "weighted":
             cmap = pyplot.get_cmap("BrBG")
             weights = list(nx.get_edge_attributes(graph, "weight").values())
             max_weight = numpy.amax(numpy.absolute(weights))
