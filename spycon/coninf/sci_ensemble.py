@@ -72,6 +72,7 @@ def create_dataset(
         X_dict[con_inf_name] = numpy.concatenate(X_tmp)
     pair_ids = numpy.concatenate(pair_ids)
     X = pandas.DataFrame(numpy.hstack(list(X_dict.values())), columns=feature_names)
+    print(feature_names)
     if labels is not None:
         y = numpy.concatenate(y)
         return X, y, pair_ids
@@ -146,61 +147,6 @@ def _train(dataloader, model, loss_fn, optimizer):
             loss, current = loss.item(), batch * len(X)
 
 
-def _load_train_dataset(con_inf_dict: dict, noncon_fold: int = 10):
-    example_params = numpy.array(
-        [[0.34, 0.2], [0.34, 0.16], [0.36, 0.08], [0.42, 0.08], [0.4, 0.18]]
-    )
-    chip, experiment_name = 2602, "cell3VC"
-    X, y = None, None
-    for example_param in example_params:
-        mu_noise, std_noise = example_param
-        name = "ren_simulation_%d_%s_long_%d_%d" % (
-            chip,
-            experiment_name,
-            numpy.around(mu_noise * 1e3),
-            numpy.around(std_noise * 1e2),
-        )
-        for i in range(5):
-            N = 100  # 2 * numpy.random.randint(30, 50)
-            # N = 2 * numpy.random.randint(5, 10)
-            N_exc = int(N / 2)
-            # T_stop = numpy.random.randint(1800, 3600)
-            print(i)
-            exc_neurons, inh_neurons = numpy.arange(0, 150), numpy.arange(150, 300)
-            numpy.random.shuffle(exc_neurons), numpy.random.shuffle(inh_neurons)
-            subset = numpy.concatenate([exc_neurons[:N_exc], inh_neurons[:N_exc]])
-            spycon_test = load_test(
-                name,
-                params={"T_stop": 3600, "subset": subset},
-                path="../data/gt_data/",
-            )
-            spycon_result_dict = {}
-            for con_inf_name, con_inf in con_inf_dict.items():
-                spycon_result = con_inf.infer_connectivity(
-                    spycon_test.times, spycon_test.ids, parallel=True
-                )
-                spycon_result_dict[con_inf_name] = spycon_result
-            X_tmp, y_tmp, pair_ids = create_dataset(
-                spycon_result_dict,
-                spycon_test.marked_edges,
-            )
-            if X is None or y is None:
-                X, y = X_tmp.to_numpy(), y_tmp
-            else:
-                X = numpy.concatenate([X, X_tmp.to_numpy()])
-                y = numpy.concatenate([y, y_tmp])
-    pos_samples = numpy.where(y != 0)[0]
-    neg_samples = numpy.where(y == 0)[0]
-    numpy.random.shuffle(neg_samples)
-    neg_samples = neg_samples[: noncon_fold * len(pos_samples)]
-    sample_idx = numpy.concatenate([pos_samples, neg_samples])
-    numpy.random.shuffle(sample_idx)
-    X_select, y_select = X[sample_idx], y[sample_idx]
-    y_select = torch.tensor(y_select, dtype=torch.int64)
-    X_select = torch.tensor(X_select, dtype=torch.float32)
-    return X_select, y_select
-
-
 def load_train_dataset(
     spycon_tests: list, con_inf_dict: dict, parallel: bool = True, noncon_fold: int = 10
 ) -> tuple:
@@ -248,7 +194,7 @@ def train_network(
     model_name: str,
     input_features: numpy.ndarray,
     labels: numpy.ndarray,
-    model_path: str = None,
+    model_path: str,
     save_training_models: bool = False,
     hidden_units: list = [
         10,
@@ -262,9 +208,6 @@ def train_network(
         model_path (str): Path to folder where model is saved. Defaults to "../data/nn_models/".
         save_training_models (bool): Save models during training. Defaults to False.
     """
-    if model_path is None:
-        model_path = spycon.__path__[0] + "/../data/nn_models/"
-    spycon.__path__
     nn_model = ConnectivityEnsemble(input_features.shape[1], hidden_units)
     print("##### Loads Training Dataset #####")
     # X, y = _load_train_dataset()
@@ -518,6 +461,4 @@ class NNEnsemble(SpikeConnectivityInference):
                 weights.append(numpy.nan)
         weights = numpy.concatenate(weights)
         threshold = self.params.get("threshold", self.default_params["threshold"])
-        if self.params.get("save_test", self.default_params["save_test"]):
-            numpy.savez(self.model_path + "_testset.npz", X=X, pair_ids=pair_ids)
         return nodes, weights, stats, threshold
