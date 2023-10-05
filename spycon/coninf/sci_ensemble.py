@@ -332,7 +332,6 @@ class NNEnsemble(SpikeConnectivityInference):
             "model_path": spycon.__path__[0] + "/../data/nn_models/",
             "threshold": 0.66,
             "con_inf_dict": {},
-            "save_test": True,
         }
         self.con_inf_dict = self.params.get(
             "con_inf_dict", self.default_params["con_inf_dict"]
@@ -440,8 +439,6 @@ class NNEnsemble(SpikeConnectivityInference):
                 weights.append(numpy.array([[edge[0], edge[1], numpy.nan]]))
         weights = numpy.concatenate(weights)
         threshold = self.params.get("threshold", self.default_params["threshold"])
-        if self.params.get("save_test", self.default_params["save_test"]):
-            numpy.savez(self.model_path + "_testset.npz", X=X, pair_ids=pair_ids)
         return nodes, weights, stats, threshold
 
     def _infer_connectivity_parallel(
