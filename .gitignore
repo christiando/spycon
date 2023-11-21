@@ -4,3 +4,4 @@ docs/_build/
 spycon.egg-info/
 spycon/__pycache__/
 spycon/.ipynb_checkpoints/
+data/nn_models/eANN_epoch*
