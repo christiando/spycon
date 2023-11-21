@@ -6,6 +6,7 @@ import numpy
 import multiprocessing
 from itertools import repeat
 from scipy.stats import norm
+from tqdm import tqdm
 
 
 class CoincidenceIndex(SpikeConnectivityInference):
@@ -26,10 +27,10 @@ class CoincidenceIndex(SpikeConnectivityInference):
             - 'jitter_factor' (int): Maximum number of time bins the spikes can be jittered. Default is 7.
             - 'num_surrogates' (int): Number of surrogates to be created. Default is 50.
             - 'jitter' (bool): If True, spikes are uniformly jittered; otherwise, spikes are randomly selected from the population. Default is False.
+            - 'deconv_ccg': Boolean value, that determines whether the CCG is deconvolved [Spivak, 22]. (Default=False)
     """
 
     def __init__(self, params: dict = {}):
-
         super().__init__(params)
         self.method = "ci"
         self.default_params = {
@@ -40,6 +41,7 @@ class CoincidenceIndex(SpikeConnectivityInference):
             "jitter_factor": 3,
             "num_surrogates": 50,
             "jitter": False,
+            "deconv_ccg": False,
         }
 
     def _infer_connectivity(
@@ -255,25 +257,80 @@ class CoincidenceIndex(SpikeConnectivityInference):
         ccg_tau = self.params.get("ccg_tau", self.default_params["ccg_tau"])
         syn_tau = self.params.get("syn_tau", self.default_params["syn_tau"])
         effective_bins = int(ccg_tau / binsize)
-        ccg = elephant.spike_train_correlation.cross_correlation_histogram(
-            st1,
-            st2,
-            window=[-effective_bins, effective_bins],
-            border_correction=False,
-            binary=False,
-            kernel=None,
-            method="memory",
-        )
+
+        deconv_ccg = self.params.get("deconv_ccg", self.default_params["deconv_ccg"])
+
+        if deconv_ccg:
+            ccg_full, ccg_times = self._compute_ccg(st1, st2, effective_bins + 1)
+            ccg_times = ccg_times[1:-1]
+            ccg = self.deconv_ccg(ccg_full, st1, st2)[2:]
+        else:
+            ccg, ccg_times = self._compute_ccg(st1, st2, effective_bins)
+
         # normalization = numpy.sqrt(len(times1) * len(times2))
         # ccg_normed = ccg[0].as_array()/normalization
         st1_mu, st1_std = numpy.mean(st1.to_array()), numpy.std(st1.to_array())
         st2_mu, st2_std = numpy.mean(st2.to_array()), numpy.std(st2.to_array())
-        ccg_normed = (
-            (ccg[0].as_array() / st1.n_bins - st1_mu * st2_mu) / st1_std / st2_std
-        )
-        tau = ccg[1] * binsize
+        ccg_normed = (ccg / st1.n_bins - st1_mu * st2_mu) / st1_std / st2_std
+        tau = ccg_times * binsize
         delay_window1 = numpy.where(numpy.logical_and(tau > 0, tau <= syn_tau))[0]
         delay_window2 = numpy.where(numpy.logical_and(tau >= -syn_tau, tau < 0))[0]
         ci1 = numpy.sum(ccg_normed[delay_window1]) / numpy.sum(ccg_normed[tau > 0])
         ci2 = numpy.sum(ccg_normed[delay_window2]) / numpy.sum(ccg_normed[tau < 0])
         return ci1, ci2
+
+    def _compute_ccg(self, st1, st2, bins):
+        ccg_full = elephant.spike_train_correlation.cross_correlation_histogram(
+            st1,
+            st2,
+            window=[-bins, bins],
+            border_correction=False,
+            binary=False,
+            kernel=None,
+            method="memory",
+        )
+        return ccg_full[0].as_array()[:, 0], ccg_full[1]
+
+    def deconv_ccg(self, ccg, st1, st2):
+        m = len(ccg)
+        hw = (m - 1) // 2
+        nspks1, nspks2 = st1.get_num_of_spikes(), st2.get_num_of_spikes()
+        acg1 = elephant.spike_train_correlation.cross_correlation_histogram(
+            st1,
+            st1,
+            window=[-hw, hw],
+            border_correction=False,
+            binary=False,
+            kernel=None,
+            method="memory",
+        )
+
+        acg1 = acg1[0][:, 0].magnitude.T[0]
+        acg1 = acg1 - numpy.sum(acg1) / m
+        acg1 /= nspks1
+        hidx = list(range(0, m, hw * (hw + 2)))
+        acg1[hw] = 1 - numpy.sum(acg1[hidx])
+
+        acg2 = elephant.spike_train_correlation.cross_correlation_histogram(
+            st2,
+            st2,
+            window=[-hw, hw],
+            border_correction=False,
+            binary=False,
+            kernel=None,
+            method="memory",
+        )
+        acg2 = acg2[0][:, 0].magnitude.T[0]
+
+        acg2 = acg2 - numpy.sum(acg2) / m
+        acg2 /= nspks2
+        hidx = list(range(0, m, hw * (hw + 2)))
+        acg2[hw] = 1 - numpy.sum(acg2[hidx])
+
+        den = numpy.fft.fft(acg1, m) * numpy.fft.fft(acg2, m)
+        num = numpy.fft.fft(ccg, m)
+        dccg_fft = num
+        dccg_fft[1:] /= den[1:]
+        dccg = numpy.real(numpy.fft.ifft(dccg_fft, m))
+        dccg[dccg < 0] = 0.0
+        return dccg

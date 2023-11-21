@@ -31,10 +31,10 @@ class GLMCC(SpikeConnectivityInference):
             - 'tau' (list of float): Time constants tau for exponential decay in seconds. Default is [1e-3, 1e-3].
             - 'beta' (float): Corresponds to the penalty term (gamma in the paper) for slow trend fitting. A larger beta results in a higher penalty. Default is 4000.
             - 'alpha' (float): Threshold. Default is 1e-2.
+            - 'deconv_ccg': Boolean value, that determines whether the CCG is deconvolved [Spivak, 22]. (Default=False)
     """
 
     def __init__(self, params: dict = {}):
-
         super().__init__(params)
         self.method = "glmcc"
         self.default_params = {
@@ -45,6 +45,7 @@ class GLMCC(SpikeConnectivityInference):
             "tau": [1e-3, 1e-3],  # time constant tau for exponential decay (spike rate)
             "beta": 4000,  # corresponds to penalty term gamma in the paper (for slow trend fitting), bigger the beta, higher the penalty
             "alpha": 0.001,  # alpha value to be compared in end
+            "deconv_ccg": False,
         }
 
     def _infer_connectivity(
@@ -86,7 +87,6 @@ class GLMCC(SpikeConnectivityInference):
         for pair in tqdm(pairs):
             id1, id2 = pair
             if not any(numpy.prod(pairs_already_computed == [id2, id1], axis=1)):
-
                 zscore1, weight1, zscore2, weight2, pair = self._test_connection_pair(
                     times_ms, ids, pair
                 )
@@ -215,7 +215,11 @@ class GLMCC(SpikeConnectivityInference):
         id1, id2 = pair
         times1 = times_ms[ids == id1]
         times2 = times_ms[ids == id2]
-        glmcc_ccg_result = self._linear_crossCorrelogram(times1, times2, T)
+        deconv_ccg = self.params.get("deconv_ccg", self.default_params["deconv_ccg"])
+        if deconv_ccg:
+            glmcc_ccg_result = self._get_deconv_ccg(times1, times2, T)
+        else:
+            glmcc_ccg_result = self._linear_crossCorrelogram(times1, times2, T)
         zscore1, weight1, zscore2, weight2 = self._test_connection(glmcc_ccg_result)
 
         return zscore1, weight1, zscore2, weight2, pair
@@ -338,7 +342,7 @@ class GLMCC(SpikeConnectivityInference):
                 result += 1
             return result
 
-    def _linear_crossCorrelogram(self, times1, times2, T):
+    def _linear_crossCorrelogram(self, times1, times2, T, additional_bins=0):
         """
         make Cross correlogram.
 
@@ -401,7 +405,7 @@ class GLMCC(SpikeConnectivityInference):
 
         # make histogram
         bin_width = DELTA  # bin width
-        bin_num = int(2 * w / bin_width)  # the number of bin
+        bin_num = int(2 * (w / bin_width + additional_bins)) + 1  # the number of bin
 
         hist_array = np.histogram(np.array(c), bins=bin_num, range=(-1 * w, w))
         result = [0, 0, 0, 0]
@@ -411,6 +415,38 @@ class GLMCC(SpikeConnectivityInference):
         result[3] = len(cell2)
 
         return result
+
+    def _get_deconv_ccg(self, times1, times2, T):
+        ccg_result = self._linear_crossCorrelogram(times1, times2, T, 1)
+        ccg = ccg_result[1]
+        acg1_result = self._linear_crossCorrelogram(times1, times1, T, 1)
+        acg1 = acg1_result[1]
+        nspks1 = acg1_result[2]
+        acg2_result = self._linear_crossCorrelogram(times2, times2, T, 1)
+        acg2 = acg2_result[1]
+        nspks2 = acg2_result[2]
+
+        m = len(ccg)
+        hw = (m - 1) // 2
+
+        acg1 = acg1 - numpy.sum(acg1) / m
+        acg1 /= nspks1
+        hidx = list(range(0, m, hw * (hw + 2)))
+        acg1[hw] = 1 - numpy.sum(acg1[hidx])
+
+        acg2 = acg2 - numpy.sum(acg2) / m
+        acg2 /= nspks2
+        hidx = list(range(0, m, hw * (hw + 2)))
+        acg2[hw] = 1 - numpy.sum(acg2[hidx])
+
+        den = numpy.fft.fft(acg1, m) * numpy.fft.fft(acg2, m)
+        num = numpy.fft.fft(ccg, m)
+        dccg_fft = num
+        dccg_fft[1:] /= den[1:]
+        dccg = numpy.real(numpy.fft.ifft(dccg_fft, m))
+        dccg[dccg < 0] = 0.0
+        ccg_result[1] = dccg[2:]
+        return ccg_result
 
     def _init_par(self, rate, NPAR):
         """

@@ -265,8 +265,9 @@ class Smoothed_CCG(SpikeConnectivityInference):
         # pfast_max = 1. - poisson.cdf(num_spikes_max - 1., mu=lmbda_slow) - .5 * poisson.pmf(num_spikes_max, mu=lmbda_slow)
         # pfast_min = 1. - poisson.cdf(num_spikes_min - 1., mu=lmbda_slow) - .5 * poisson.pmf(num_spikes_min, mu=lmbda_slow)
         logpfast_max = numpy.logaddexp(
-            poisson.logcdf(num_spikes_max - 1, mu=lmbda_slow),
-            poisson.logpmf(num_spikes_max, mu=lmbda_slow) - numpy.log(2),
+            poisson.logcdf(numpy.maximum(num_spikes_max - 1, 0), mu=lmbda_slow),
+            poisson.logpmf(numpy.maximum(num_spikes_max, 0), mu=lmbda_slow)
+            - numpy.log(2),
         )
         if numpy.abs(logpfast_max) > 1e-4:
             logpfast_max = numpy.log(-numpy.expm1(logpfast_max))
@@ -275,8 +276,9 @@ class Smoothed_CCG(SpikeConnectivityInference):
                 logpfast_max = -1e-20
             logpfast_max = numpy.log(-logpfast_max)
         logpfast_min = numpy.logaddexp(
-            poisson.logcdf(num_spikes_min - 1, mu=lmbda_slow),
-            poisson.logpmf(num_spikes_min, mu=lmbda_slow) - numpy.log(2),
+            poisson.logcdf(numpy.maximum(num_spikes_min - 1, 0), mu=lmbda_slow),
+            poisson.logpmf(numpy.maximum(num_spikes_min, 0), mu=lmbda_slow)
+            - numpy.log(2),
         )
         # if numpy.abs(logpfast_max) > 1e-4:
         #    logpfast_max = numpy.log(-numpy.expm1(x))
@@ -363,72 +365,19 @@ class Smoothed_CCG(SpikeConnectivityInference):
         ccg_bins_eff = numpy.amax([int(numpy.ceil(len(kernel) / 2)), ccg_bins])
 
         kernel_hw = len(kernel) // 2
-        ccg_full = elephant.spike_train_correlation.cross_correlation_histogram(
-            st1,
-            st2,
-            window=[-ccg_bins_eff - kernel_hw, ccg_bins_eff + kernel_hw],
-            border_correction=False,
-            binary=False,
-            kernel=None,
-            method="memory",
-        )
-        ccg_times = ccg_full[0].times.magnitude[
-            ccg_bins_eff
-            - ccg_bins
-            + kernel_hw : ccg_bins_eff
-            + ccg_bins
-            + kernel_hw
-            + 1
-        ]
-
-        ccg_full = ccg_full[0][:, 0].magnitude.T[0]
         deconv_ccg = self.params.get("deconv_ccg", self.default_params["deconv_ccg"])
 
         if deconv_ccg:
-            nspks1, nspks2 = len(times1), len(times2)
-            acg1 = elephant.spike_train_correlation.cross_correlation_histogram(
+            ccg_full = elephant.spike_train_correlation.cross_correlation_histogram(
                 st1,
-                st1,
-                window=[-ccg_bins_eff - kernel_hw, ccg_bins_eff + kernel_hw],
+                st2,
+                window=[-ccg_bins_eff - kernel_hw - 1, ccg_bins_eff + kernel_hw + 1],
                 border_correction=False,
                 binary=False,
                 kernel=None,
                 method="memory",
             )
-
-            acg1 = acg1[0][:, 0].magnitude.T[0]
-            m = len(acg1)
-            hw = (m - 1) // 2
-            acg1 = acg1 - numpy.sum(acg1) / m
-            acg1 /= nspks1
-            hidx = list(range(0, m + 0, hw * (hw + 2)))
-            acg1[hw] = 1 - numpy.sum(acg1[hidx])
-
-            acg2 = elephant.spike_train_correlation.cross_correlation_histogram(
-                st2,
-                st2,
-                window=[-ccg_bins_eff - kernel_hw, ccg_bins_eff + kernel_hw],
-                border_correction=False,
-                binary=False,
-                kernel=None,
-                method="memory",
-            )
-            acg2 = acg2[0][:, 0].magnitude.T[0]
-            m = len(acg2)
-            hw = (m - 1) // 2
-            acg2 = acg2 - numpy.sum(acg2) / m
-            acg2 /= nspks2
-            hidx = list(range(0, m + 0, hw * (hw + 2)))
-            acg2[hw] = 1 - numpy.sum(acg2[hidx])
-
-            den = numpy.fft.fft(acg1, m) * numpy.fft.fft(acg2, m)
-            num = numpy.fft.fft(ccg_full, m)
-            dccg_fft = num
-            dccg_fft[1:] /= den[1:]
-            dccg = numpy.real(numpy.fft.ifft(dccg_fft, m))
-            dccg[dccg < 0] = 0.0
-            ccg_convolved = numpy.convolve(dccg, kernel, mode="valid")[1:-1]
-            ccg = dccg[
+            ccg_times = ccg_full[0].times.magnitude[
                 ccg_bins_eff
                 - ccg_bins
                 + kernel_hw
@@ -437,7 +386,38 @@ class Smoothed_CCG(SpikeConnectivityInference):
                 + kernel_hw
                 + 2
             ]
+            ccg_full = ccg_full[0][:, 0].magnitude.T[0]
+
+            dccg = self.deconv_ccg(ccg_full, st1, st2)[2:-2]
+            dccg = numpy.around(dccg)
+            ccg_convolved = numpy.convolve(dccg, kernel, mode="valid")
+            ccg = dccg[
+                ccg_bins_eff
+                - ccg_bins
+                + kernel_hw : ccg_bins_eff
+                + ccg_bins
+                + kernel_hw
+                + 1
+            ]
         else:
+            ccg_full = elephant.spike_train_correlation.cross_correlation_histogram(
+                st1,
+                st2,
+                window=[-ccg_bins_eff - kernel_hw, ccg_bins_eff + kernel_hw],
+                border_correction=False,
+                binary=False,
+                kernel=None,
+                method="memory",
+            )
+            ccg_times = ccg_full[0].times.magnitude[
+                ccg_bins_eff
+                - ccg_bins
+                + kernel_hw : ccg_bins_eff
+                + ccg_bins
+                + kernel_hw
+                + 1
+            ]
+            ccg_full = ccg_full[0][:, 0].magnitude.T[0]
             ccg_convolved = numpy.convolve(ccg_full, kernel, mode="valid")[1:-1]
             ccg = ccg_full[
                 ccg_bins_eff
@@ -449,3 +429,47 @@ class Smoothed_CCG(SpikeConnectivityInference):
             ]
 
         return ccg, ccg_convolved, ccg_times
+
+    def deconv_ccg(self, ccg, st1, st2):
+        m = len(ccg)
+        hw = (m - 1) // 2
+        nspks1, nspks2 = st1.get_num_of_spikes(), st2.get_num_of_spikes()
+        acg1 = elephant.spike_train_correlation.cross_correlation_histogram(
+            st1,
+            st1,
+            window=[-hw, hw],
+            border_correction=False,
+            binary=False,
+            kernel=None,
+            method="memory",
+        )
+
+        acg1 = acg1[0][:, 0].magnitude.T[0]
+        acg1 = acg1 - numpy.sum(acg1) / m
+        acg1 /= nspks1
+        hidx = list(range(0, m + 0, hw * (hw + 2)))
+        acg1[hw] = 1 - numpy.sum(acg1[hidx])
+
+        acg2 = elephant.spike_train_correlation.cross_correlation_histogram(
+            st2,
+            st2,
+            window=[-hw, hw],
+            border_correction=False,
+            binary=False,
+            kernel=None,
+            method="memory",
+        )
+        acg2 = acg2[0][:, 0].magnitude.T[0]
+
+        acg2 = acg2 - numpy.sum(acg2) / m
+        acg2 /= nspks2
+        hidx = list(range(0, m + 0, hw * (hw + 2)))
+        acg2[hw] = 1 - numpy.sum(acg2[hidx])
+
+        den = numpy.fft.fft(acg1, m) * numpy.fft.fft(acg2, m)
+        num = numpy.fft.fft(ccg, m)
+        dccg_fft = num
+        dccg_fft[1:] /= den[1:]
+        dccg = numpy.real(numpy.fft.ifft(dccg_fft, m))
+        dccg[dccg < 0] = 0.0
+        return dccg
