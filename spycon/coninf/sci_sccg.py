@@ -23,6 +23,7 @@ class Smoothed_CCG(SpikeConnectivityInference):
             - 'syn_window': Time window, which the CCG is check for peaks (in seconds). (Default=(.8e-3,5.8e-3))
             - 'ccg_tau': The maximum lag which the CCG is calculated for (in seconds). (Default=50e-3)
             - 'alpha': Value, that is used for thresholding p-values (0<alpha<1). (Default=.01)
+            - 'deconv_ccg': Boolean value, that determines whether the CCG is deconvolved [Spivak, 22]. (Default=False)
     """
 
     def __init__(self, params: dict = {}):
@@ -35,6 +36,7 @@ class Smoothed_CCG(SpikeConnectivityInference):
             "syn_window": (0.8e-3, 5.8e-3),
             "ccg_tau": 50e-3,
             "alpha": 0.001,
+            "deconv_ccg": False,
         }
 
     def _infer_connectivity(
@@ -323,7 +325,7 @@ class Smoothed_CCG(SpikeConnectivityInference):
         kernel: numpy.ndarray,
         t_start: float,
         t_stop: float,
-    ) -> tuple:
+    ):
         """
         Compute the cross-correlogram (CCG) and convolved CCG between two spike trains.
 
@@ -343,7 +345,6 @@ class Smoothed_CCG(SpikeConnectivityInference):
         Note:
             The CCG represents the cross-correlation between spike times of neuron 1 and neuron 2.
         """
-
         binsize = self.params.get("binsize", self.default_params["binsize"])
         neo_spk_train1 = neo.SpikeTrain(
             times1, units=quantities.second, t_start=t_start, t_stop=t_stop
@@ -360,31 +361,91 @@ class Smoothed_CCG(SpikeConnectivityInference):
         ccg_tau = self.params.get("ccg_tau", self.default_params["ccg_tau"])
         ccg_bins = int(numpy.ceil(ccg_tau / binsize))
         ccg_bins_eff = numpy.amax([int(numpy.ceil(len(kernel) / 2)), ccg_bins])
-        ccg = elephant.spike_train_correlation.cross_correlation_histogram(
+
+        kernel_hw = len(kernel) // 2
+        ccg_full = elephant.spike_train_correlation.cross_correlation_histogram(
             st1,
             st2,
-            window=[-ccg_bins_eff, ccg_bins_eff],
+            window=[-ccg_bins_eff - kernel_hw, ccg_bins_eff + kernel_hw],
             border_correction=False,
             binary=False,
             kernel=None,
             method="memory",
         )
-        counts_ccg = ccg[0][
-            ccg_bins_eff - ccg_bins : ccg_bins_eff + ccg_bins + 1, 0
-        ].magnitude.T[0]
-        times_ccg = ccg[0].times.magnitude[
-            ccg_bins_eff - ccg_bins : ccg_bins_eff + ccg_bins + 1
+        ccg_times = ccg_full[0].times.magnitude[
+            ccg_bins_eff
+            - ccg_bins
+            + kernel_hw : ccg_bins_eff
+            + ccg_bins
+            + kernel_hw
+            + 1
         ]
-        ccg_convolved = elephant.spike_train_correlation.cross_correlation_histogram(
-            st1,
-            st2,
-            window=[-ccg_bins_eff, ccg_bins_eff],
-            border_correction=False,
-            binary=False,
-            kernel=kernel,
-            method="memory",
-        )
-        counts_ccg_convolved = ccg_convolved[0][
-            ccg_bins_eff - ccg_bins : ccg_bins_eff + ccg_bins + 1, 0
-        ].magnitude.T[0]
-        return counts_ccg, counts_ccg_convolved, times_ccg
+
+        ccg_full = ccg_full[0][:, 0].magnitude.T[0]
+        deconv_ccg = self.params.get("deconv_ccg", self.default_params["deconv_ccg"])
+
+        if deconv_ccg:
+            nspks1, nspks2 = len(times1), len(times2)
+            acg1 = elephant.spike_train_correlation.cross_correlation_histogram(
+                st1,
+                st1,
+                window=[-ccg_bins_eff - kernel_hw, ccg_bins_eff + kernel_hw],
+                border_correction=False,
+                binary=False,
+                kernel=None,
+                method="memory",
+            )
+
+            acg1 = acg1[0][:, 0].magnitude.T[0]
+            m = len(acg1)
+            hw = (m - 1) // 2
+            acg1 = acg1 - numpy.sum(acg1) / m
+            acg1 /= nspks1
+            hidx = list(range(0, m + 0, hw * (hw + 2)))
+            acg1[hw] = 1 - numpy.sum(acg1[hidx])
+
+            acg2 = elephant.spike_train_correlation.cross_correlation_histogram(
+                st2,
+                st2,
+                window=[-ccg_bins_eff - kernel_hw, ccg_bins_eff + kernel_hw],
+                border_correction=False,
+                binary=False,
+                kernel=None,
+                method="memory",
+            )
+            acg2 = acg2[0][:, 0].magnitude.T[0]
+            m = len(acg2)
+            hw = (m - 1) // 2
+            acg2 = acg2 - numpy.sum(acg2) / m
+            acg2 /= nspks2
+            hidx = list(range(0, m + 0, hw * (hw + 2)))
+            acg2[hw] = 1 - numpy.sum(acg2[hidx])
+
+            den = numpy.fft.fft(acg1, m) * numpy.fft.fft(acg2, m)
+            num = numpy.fft.fft(ccg_full, m)
+            dccg_fft = num
+            dccg_fft[1:] /= den[1:]
+            dccg = numpy.real(numpy.fft.ifft(dccg_fft, m))
+            dccg[dccg < 0] = 0.0
+            ccg_convolved = numpy.convolve(dccg, kernel, mode="valid")[1:-1]
+            ccg = dccg[
+                ccg_bins_eff
+                - ccg_bins
+                + kernel_hw
+                + 1 : ccg_bins_eff
+                + ccg_bins
+                + kernel_hw
+                + 2
+            ]
+        else:
+            ccg_convolved = numpy.convolve(ccg_full, kernel, mode="valid")[1:-1]
+            ccg = ccg_full[
+                ccg_bins_eff
+                - ccg_bins
+                + kernel_hw : ccg_bins_eff
+                + ccg_bins
+                + kernel_hw
+                + 1
+            ]
+
+        return ccg, ccg_convolved, ccg_times
