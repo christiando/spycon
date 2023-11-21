@@ -1,0 +1,619 @@
+
+
+<!DOCTYPE html>
+
+
+<html lang="en" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
+
+    <title>Inference algorithms &#8212; spycon  documentation</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "light";
+  </script>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="_static/styles/theme.css?digest=365ca57ee442770a23c6" rel="stylesheet" />
+<link href="_static/styles/bootstrap.css?digest=365ca57ee442770a23c6" rel="stylesheet" />
+<link href="_static/styles/pydata-sphinx-theme.css?digest=365ca57ee442770a23c6" rel="stylesheet" />
+
+  
+  <link href="_static/vendor/fontawesome/6.1.2/css/all.min.css?digest=365ca57ee442770a23c6" rel="stylesheet" />
+  <link rel="preload" as="font" type="font/woff2" crossorigin href="_static/vendor/fontawesome/6.1.2/webfonts/fa-solid-900.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="_static/vendor/fontawesome/6.1.2/webfonts/fa-brands-400.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="_static/vendor/fontawesome/6.1.2/webfonts/fa-regular-400.woff2" />
+
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
+    <link rel="stylesheet" href="_static/styles/sphinx-book-theme.css?digest=14f4ca6b54d191a8c7657f6c759bf11a5fb86285" type="text/css" />
+  
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="_static/scripts/bootstrap.js?digest=365ca57ee442770a23c6" />
+<link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=365ca57ee442770a23c6" />
+  <script src="_static/vendor/fontawesome/6.1.2/js/all.min.js?digest=365ca57ee442770a23c6"></script>
+
+    <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+    <script src="_static/doctools.js"></script>
+    <script src="_static/sphinx_highlight.js"></script>
+    <script src="_static/scripts/sphinx-book-theme.js?digest=5a5c038af52cf7bc1a1ec88eea08e6366ee68824"></script>
+    <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'inference';</script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="prev" title="spycon utilities" href="utilities.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <a class="skip-link" href="#main-content">Skip to main content</a>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>
+    Back to top
+  </button>
+
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          name="__primary"
+          id="__primary"/>
+  <label class="overlay overlay-primary" for="__primary"></label>
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          name="__secondary"
+          id="__secondary"/>
+  <label class="overlay overlay-secondary" for="__secondary"></label>
+  
+  <div class="search-button__wrapper">
+    <div class="search-button__overlay"></div>
+    <div class="search-button__search-container">
+<form class="bd-search d-flex align-items-center"
+      action="search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         id="search-input"
+         placeholder="Search..."
+         aria-label="Search..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form></div>
+  </div>
+  
+    <nav class="bd-header navbar navbar-expand-lg bd-navbar">
+    </nav>
+  
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      <div class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+    
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+  
+
+<a class="navbar-brand logo" href="index.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="_static/spycon_logo.png" class="logo__image only-light" alt="spycon  documentation - Home"/>
+    <script>document.write(`<img src="_static/spycon_logo.png" class="logo__image only-dark" alt="spycon  documentation - Home"/>`);</script>
+  
+  
+</a></div>
+        <div class="sidebar-primary-item"><nav class="bd-links" id="bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item navbar-nav active">
+        <p aria-level="2" class="caption" role="heading"><span class="caption-text">Examples:</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="notebooks/tutorial.html">sPYcon Tutorial</a></li>
+<li class="toctree-l1"><a class="reference internal" href="notebooks/create_test.html">Creating a spycon test</a></li>
+<li class="toctree-l1"><a class="reference internal" href="notebooks/create_spycon_method.html">Create your own Connectivity method</a></li>
+<li class="toctree-l1"><a class="reference internal" href="notebooks/use_eann.html">Use eANN</a></li>
+<li class="toctree-l1"><a class="reference internal" href="notebooks/train_eann.html">Train your own ensemble network</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">API:</span></p>
+<ul class="current nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="utilities.html">spycon utilities</a></li>
+<li class="toctree-l1 current active"><a class="current reference internal" href="#">Inference algorithms</a></li>
+</ul>
+
+    </div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+  </div>
+  
+  <div id="rtd-footer-container"></div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main">
+        
+        
+
+<div class="sbt-scroll-pixel-helper"></div>
+
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item"><label class="sidebar-toggle primary-toggle btn btn-sm" for="__primary" title="Toggle primary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <span class="fa-solid fa-bars"></span>
+</label></div>
+      
+    </div>
+  
+  
+    <div class="header-article-items__end">
+      
+        <div class="header-article-item">
+
+<div class="article-header-buttons">
+
+
+<a href="https://github.com/christiando/spycon" target="_blank"
+   class="btn btn-sm btn-source-repository-button"
+   title="Source repository"
+   data-bs-placement="bottom" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fab fa-github"></i>
+  </span>
+
+</a>
+
+
+
+
+
+
+<div class="dropdown dropdown-download-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Download this page">
+    <i class="fas fa-download"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="_sources/inference.rst" target="_blank"
+   class="btn btn-sm btn-download-source-button dropdown-item"
+   title="Download source file"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file"></i>
+  </span>
+<span class="btn__text-container">.rst</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li>
+<button onclick="window.print()"
+  class="btn btn-sm btn-download-pdf-button dropdown-item"
+  title="Print to PDF"
+  data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file-pdf"></i>
+  </span>
+<span class="btn__text-container">.pdf</span>
+</button>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+<button onclick="toggleFullScreen()"
+  class="btn btn-sm btn-fullscreen-button"
+  title="Fullscreen mode"
+  data-bs-placement="bottom" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-expand"></i>
+  </span>
+
+</button>
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm navbar-btn theme-switch-button" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="theme-switch nav-link" data-mode="light"><i class="fa-solid fa-sun fa-lg"></i></span>
+    <span class="theme-switch nav-link" data-mode="dark"><i class="fa-solid fa-moon fa-lg"></i></span>
+    <span class="theme-switch nav-link" data-mode="auto"><i class="fa-solid fa-circle-half-stroke fa-lg"></i></span>
+  </button>
+`);
+</script>
+
+<script>
+document.write(`
+  <button class="btn btn-sm navbar-btn search-button search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+  </button>
+`);
+</script>
+<label class="sidebar-toggle secondary-toggle btn btn-sm" for="__secondary"title="Toggle secondary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="fa-solid fa-list"></span>
+</label>
+</div></div>
+      
+    </div>
+  
+</div>
+</div>
+              
+              
+
+<div id="jb-print-docs-body" class="onlyprint">
+    <h1>Inference algorithms</h1>
+    <!-- Table of contents -->
+    <div id="print-main-content">
+        <div id="jb-print-toc">
+            
+            <div>
+                <h2> Contents </h2>
+            </div>
+            <nav aria-label="Page">
+                <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#spycon.coninf.CoincidenceIndex"><code class="docutils literal notranslate"><span class="pre">CoincidenceIndex</span></code></a><ul class="visible nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#spycon.coninf.CoincidenceIndex.deconv_ccg"><code class="docutils literal notranslate"><span class="pre">CoincidenceIndex.deconv_ccg()</span></code></a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#spycon.coninf.Smoothed_CCG"><code class="docutils literal notranslate"><span class="pre">Smoothed_CCG</span></code></a><ul class="visible nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#spycon.coninf.Smoothed_CCG.deconv_ccg"><code class="docutils literal notranslate"><span class="pre">Smoothed_CCG.deconv_ccg()</span></code></a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#spycon.coninf.directed_STTC"><code class="docutils literal notranslate"><span class="pre">directed_STTC</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#spycon.coninf.TE_PyInform"><code class="docutils literal notranslate"><span class="pre">TE_PyInform</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#spycon.coninf.TE_IDTXL"><code class="docutils literal notranslate"><span class="pre">TE_IDTXL</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#spycon.coninf.GLMPP"><code class="docutils literal notranslate"><span class="pre">GLMPP</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#spycon.coninf.GLMCC"><code class="docutils literal notranslate"><span class="pre">GLMCC</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#spycon.coninf.NNEnsemble"><code class="docutils literal notranslate"><span class="pre">NNEnsemble</span></code></a></li>
+</ul>
+            </nav>
+        </div>
+    </div>
+</div>
+
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article" role="main">
+                  
+  <section id="module-spycon.coninf">
+<span id="inference-algorithms"></span><h1>Inference algorithms<a class="headerlink" href="#module-spycon.coninf" title="Permalink to this heading">#</a></h1>
+<dl class="py class">
+<dt class="sig sig-object py" id="spycon.coninf.CoincidenceIndex">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">spycon.coninf.</span></span><span class="sig-name descname"><span class="pre">CoincidenceIndex</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">params</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">{}</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#spycon.coninf.CoincidenceIndex" title="Permalink to this definition">#</a></dt>
+<dd><p>Bases: <a class="reference internal" href="utilities.html#spycon.spycon_inference.SpikeConnectivityInference" title="spycon.spycon_inference.SpikeConnectivityInference"><code class="xref py py-class docutils literal notranslate"><span class="pre">SpikeConnectivityInference</span></code></a></p>
+<p>Coincidence index (CI) method as described in Eq. 5 of the paper:</p>
+<p>de Abril, Ildefons Magrans, Junichiro Yoshimoto, and Kenji Doya.
+“Connectivity inference from neural recording data: Challenges, mathematical bases and research directions.”
+Neural Networks 102 (2018): 120-137.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>params</strong> (<em>dict</em><em>, </em><em>optional</em>) – <p>Parameters for the CI method:</p>
+<ul class="simple">
+<li><p>’binsize’ (float): Time step (in seconds) used for time-discretization. Default is 0.4e-3.</p></li>
+<li><p>’syn_tau’ (float): Lag on the cross-correlogram (CCG) taken into account for the denominator in seconds. Default is 0.6e-3.</p></li>
+<li><p>’ccg_tau’ (float): The maximum lag for which the CCG is calculated in seconds. Default is 50e-3.</p></li>
+<li><p>’alpha’ (float): Value used for thresholding p-values (0 &lt; alpha &lt; 1). Default is 0.01.</p></li>
+<li><p>’jitter_factor’ (int): Maximum number of time bins the spikes can be jittered. Default is 7.</p></li>
+<li><p>’num_surrogates’ (int): Number of surrogates to be created. Default is 50.</p></li>
+<li><p>’jitter’ (bool): If True, spikes are uniformly jittered; otherwise, spikes are randomly selected from the population. Default is False.</p></li>
+<li><p>’deconv_ccg’: Boolean value, that determines whether the CCG is deconvolved [Spivak, 22]. (Default=False)</p></li>
+</ul>
+</p>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="spycon.coninf.CoincidenceIndex.deconv_ccg">
+<span class="sig-name descname"><span class="pre">deconv_ccg</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ccg</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">st1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">st2</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#spycon.coninf.CoincidenceIndex.deconv_ccg" title="Permalink to this definition">#</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="spycon.coninf.Smoothed_CCG">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">spycon.coninf.</span></span><span class="sig-name descname"><span class="pre">Smoothed_CCG</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">params</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">{}</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#spycon.coninf.Smoothed_CCG" title="Permalink to this definition">#</a></dt>
+<dd><p>Bases: <a class="reference internal" href="utilities.html#spycon.spycon_inference.SpikeConnectivityInference" title="spycon.spycon_inference.SpikeConnectivityInference"><code class="xref py py-class docutils literal notranslate"><span class="pre">SpikeConnectivityInference</span></code></a></p>
+<p>Smoothed CCG method from</p>
+<p>English, Daniel Fine, et al. “Pyramidal cell-interneuron circuit architecture and dynamics in hippocampal networks.” Neuron 96.2 (2017): 505-520.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>params</strong> (<em>dict</em>) – <p>A dictionary containing the following parameters:</p>
+<ul class="simple">
+<li><p>’binsize’: Time step (in seconds) that is used for time-discretization. (Default=.4e-3)</p></li>
+<li><p>’hf’: Half fraction of the Gaussian kernel at zero lag (0&lt;=hf&lt;=1). (Default=0.6)</p></li>
+<li><p>’gauss_std’: Standard deviation of Gaussian kernel (in seconds). (Default=0.01)</p></li>
+<li><p>’syn_window’: Time window, which the CCG is check for peaks (in seconds). (Default=(.8e-3,5.8e-3))</p></li>
+<li><p>’ccg_tau’: The maximum lag which the CCG is calculated for (in seconds). (Default=50e-3)</p></li>
+<li><p>’alpha’: Value, that is used for thresholding p-values (0&lt;alpha&lt;1). (Default=.01)</p></li>
+<li><p>’deconv_ccg’: Boolean value, that determines whether the CCG is deconvolved [Spivak, 22]. (Default=False)</p></li>
+</ul>
+</p>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="spycon.coninf.Smoothed_CCG.deconv_ccg">
+<span class="sig-name descname"><span class="pre">deconv_ccg</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ccg</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">st1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">st2</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#spycon.coninf.Smoothed_CCG.deconv_ccg" title="Permalink to this definition">#</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="spycon.coninf.directed_STTC">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">spycon.coninf.</span></span><span class="sig-name descname"><span class="pre">directed_STTC</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">params</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">{}</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#spycon.coninf.directed_STTC" title="Permalink to this definition">#</a></dt>
+<dd><p>Bases: <a class="reference internal" href="utilities.html#spycon.spycon_inference.SpikeConnectivityInference" title="spycon.spycon_inference.SpikeConnectivityInference"><code class="xref py py-class docutils literal notranslate"><span class="pre">SpikeConnectivityInference</span></code></a></p>
+<p>Directed version of the spike time tiling coefficient (STTC), as originally proposed in:</p>
+<p>Cutts, Catherine S., and Stephen J. Eglen. “Detecting pairwise correlations in spike trains: an objective comparison of methods and application to the study of retinal waves.” Journal of Neuroscience 34.43 (2014): 14288-14303.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>params</strong> (<em>dict</em><em>, </em><em>optional</em>) – <p>Parameters for the STTC method:</p>
+<ul class="simple">
+<li><p>’delta_t’ (float): Synaptic time window in seconds. Default is 7e-3.</p></li>
+<li><p>’jitter_factor’ (int): Maximum number of time bins the spikes can be jittered. Default is 7.</p></li>
+<li><p>’num_surrogates’ (int): Number of surrogates to be created. Default is 50.</p></li>
+<li><p>’jitter’ (bool): If True, spikes are uniformly jittered; otherwise, spikes are randomly selected from the population. Default is False.</p></li>
+<li><p>’alpha’ (float): Threshold. Default is 1e-3.</p></li>
+</ul>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="spycon.coninf.TE_PyInform">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">spycon.coninf.</span></span><span class="sig-name descname"><span class="pre">TE_PyInform</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">params</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">{}</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#spycon.coninf.TE_PyInform" title="Permalink to this definition">#</a></dt>
+<dd><p>Bases: <a class="reference internal" href="utilities.html#spycon.spycon_inference.SpikeConnectivityInference" title="spycon.spycon_inference.SpikeConnectivityInference"><code class="xref py py-class docutils literal notranslate"><span class="pre">SpikeConnectivityInference</span></code></a></p>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="spycon.coninf.TE_IDTXL">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">spycon.coninf.</span></span><span class="sig-name descname"><span class="pre">TE_IDTXL</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">params</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">{}</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#spycon.coninf.TE_IDTXL" title="Permalink to this definition">#</a></dt>
+<dd><p>Bases: <a class="reference internal" href="utilities.html#spycon.spycon_inference.SpikeConnectivityInference" title="spycon.spycon_inference.SpikeConnectivityInference"><code class="xref py py-class docutils literal notranslate"><span class="pre">SpikeConnectivityInference</span></code></a></p>
+<p>Transfer entropy method.</p>
+<p>This method is based on the following reference:
+- P. Wollstadt, J. T. Lizier, R. Vicente, C. Finn, M. Martinez-Zarzuela, P. Mediano, L. Novelli, M. Wibral (2019).
+IDTxl: The Information Dynamics Toolkit xl: a Python package for the efficient analysis of multivariate information dynamics in networks.
+Journal of Open Source Software, 4(34), 1081.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>params</strong> (<em>dict</em>) – <p>A dictionary containing the following parameters:</p>
+<ul class="simple">
+<li><p>’binsize’ (float): Time step (in seconds) used for time-discretization. Default is 5e-3.</p></li>
+<li><p>’k’ (int): Length of history embedding. Default is 2.</p></li>
+<li><p>’alpha’ (float): Threshold. Default is 1e-2.</p></li>
+<li><p>’jitter_factor’ (int): Maximum number of time bins for spike jittering. Default is 7.</p></li>
+<li><p>’num_surrogates’ (int): Number of surrogates to be created. Default is 50.</p></li>
+<li><p>’jitter’ (bool): If True, spikes are uniformly jittered; otherwise, spikes are randomly selected from the population. Default is False.</p></li>
+</ul>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="spycon.coninf.GLMPP">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">spycon.coninf.</span></span><span class="sig-name descname"><span class="pre">GLMPP</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">params</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">{}</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#spycon.coninf.GLMPP" title="Permalink to this definition">#</a></dt>
+<dd><p>Bases: <a class="reference internal" href="utilities.html#spycon.spycon_inference.SpikeConnectivityInference" title="spycon.spycon_inference.SpikeConnectivityInference"><code class="xref py py-class docutils literal notranslate"><span class="pre">SpikeConnectivityInference</span></code></a></p>
+<p>Implements the point process GLM method.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>params</strong> (<em>dict</em>) – <p>A dictionary containing the following parameters:</p>
+<ul class="simple">
+<li><p>’tau’ (float): Time constant of the history kernel. Default is 5e-3.</p></li>
+<li><p>’alpha’ (float): Threshold. Default is 1e-2.</p></li>
+</ul>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="spycon.coninf.GLMCC">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">spycon.coninf.</span></span><span class="sig-name descname"><span class="pre">GLMCC</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">params</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">{}</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#spycon.coninf.GLMCC" title="Permalink to this definition">#</a></dt>
+<dd><p>Bases: <a class="reference internal" href="utilities.html#spycon.spycon_inference.SpikeConnectivityInference" title="spycon.spycon_inference.SpikeConnectivityInference"><code class="xref py py-class docutils literal notranslate"><span class="pre">SpikeConnectivityInference</span></code></a></p>
+<p>Adaptation of the original Python script from:</p>
+<p>Kobayashi, R., Kurita, S., Kurth, A., Kitano, K., Mizuseki, K., Diesmann, M., Richmond, B. J., &amp; Shinomoto, S. (2019). Reconstructing neuronal circuitry from parallel spike trains. Nature Communications, 10(1). <a class="reference external" href="https://doi.org/10.1038/s41467-019-12225-2">https://doi.org/10.1038/s41467-019-12225-2</a></p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>params</strong> (<em>dict</em>) – <p>Parameter dictionary with the following keys:</p>
+<ul class="simple">
+<li><p>’binsize’ (float): Time step in seconds used for time discretization. Default is 1e-3.</p></li>
+<li><p>’ccg_tau’ (float): The maximum lag for which the cross-correlogram (CCG) is calculated, in seconds. Default is 50e-3.</p></li>
+<li><p>’syn_delay’ (float): Assumed synaptic delay in seconds. Default is 3e-3.</p></li>
+<li><p>’tau’ (list of float): Time constants tau for exponential decay in seconds. Default is [1e-3, 1e-3].</p></li>
+<li><p>’beta’ (float): Corresponds to the penalty term (gamma in the paper) for slow trend fitting. A larger beta results in a higher penalty. Default is 4000.</p></li>
+<li><p>’alpha’ (float): Threshold. Default is 1e-2.</p></li>
+<li><p>’deconv_ccg’: Boolean value, that determines whether the CCG is deconvolved [Spivak, 22]. (Default=False)</p></li>
+</ul>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="spycon.coninf.NNEnsemble">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">spycon.coninf.</span></span><span class="sig-name descname"><span class="pre">NNEnsemble</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">params</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">save_training_models</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#spycon.coninf.NNEnsemble" title="Permalink to this definition">#</a></dt>
+<dd><p>Bases: <a class="reference internal" href="utilities.html#spycon.spycon_inference.SpikeConnectivityInference" title="spycon.spycon_inference.SpikeConnectivityInference"><code class="xref py py-class docutils literal notranslate"><span class="pre">SpikeConnectivityInference</span></code></a></p>
+<p>Neural network ensemble.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>con_inf</strong> (<a class="reference internal" href="utilities.html#spycon.spycon_inference.SpikeConnectivityInference" title="spycon.spycon_inference.SpikeConnectivityInference"><em>SpikeConnectivityInference</em></a>) – Connectivity method that should be corrected.</p></li>
+<li><p><strong>params</strong> (<em>dict</em>) – <p>Parameter dictionary with the following keys:</p>
+<ul>
+<li><p>’name’ (str): Name to identify the model and load if already trained.</p></li>
+<li><p>’model_path’ (str): Path to the saved model.</p></li>
+<li><p>’threshold’ (float): Threshold value between 0 and 1 for thresholding the network output. Default is 0.5.</p></li>
+<li><p>’con_inf_dict’ (dict): Dictionary with the connectivity inference methods. Default is an empty dictionary ({}).</p></li>
+</ul>
+</p></li>
+<li><p><strong>save_training_models</strong> (<em>bool</em><em>, </em><em>optional</em>) – Whether the models during training should be saved. Default is False.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+
+
+                </article>
+              
+
+              
+              
+              
+              
+                <footer class="prev-next-footer">
+                  <!-- Previous / next buttons -->
+<div class="prev-next-area">
+    <a class="left-prev"
+       href="utilities.html"
+       title="previous page">
+      <i class="fa-solid fa-angle-left"></i>
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">previous</p>
+        <p class="prev-next-title">spycon utilities</p>
+      </div>
+    </a>
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+                <div class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+  <div class="sidebar-secondary-item">
+  <div class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> Contents
+  </div>
+  <nav class="bd-toc-nav page-toc">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#spycon.coninf.CoincidenceIndex"><code class="docutils literal notranslate"><span class="pre">CoincidenceIndex</span></code></a><ul class="visible nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#spycon.coninf.CoincidenceIndex.deconv_ccg"><code class="docutils literal notranslate"><span class="pre">CoincidenceIndex.deconv_ccg()</span></code></a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#spycon.coninf.Smoothed_CCG"><code class="docutils literal notranslate"><span class="pre">Smoothed_CCG</span></code></a><ul class="visible nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#spycon.coninf.Smoothed_CCG.deconv_ccg"><code class="docutils literal notranslate"><span class="pre">Smoothed_CCG.deconv_ccg()</span></code></a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#spycon.coninf.directed_STTC"><code class="docutils literal notranslate"><span class="pre">directed_STTC</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#spycon.coninf.TE_PyInform"><code class="docutils literal notranslate"><span class="pre">TE_PyInform</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#spycon.coninf.TE_IDTXL"><code class="docutils literal notranslate"><span class="pre">TE_IDTXL</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#spycon.coninf.GLMPP"><code class="docutils literal notranslate"><span class="pre">GLMPP</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#spycon.coninf.GLMCC"><code class="docutils literal notranslate"><span class="pre">GLMCC</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#spycon.coninf.NNEnsemble"><code class="docutils literal notranslate"><span class="pre">NNEnsemble</span></code></a></li>
+</ul>
+  </nav></div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+<div class="bd-footer-content__inner container">
+  
+  <div class="footer-item">
+    
+<p class="component-author">
+By Christian Donner
+</p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+  <p class="copyright">
+    
+      © Copyright 2023, Christian Donner.
+      <br/>
+    
+  </p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+</div>
+          </footer>
+        
+
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="_static/scripts/bootstrap.js?digest=365ca57ee442770a23c6"></script>
+<script src="_static/scripts/pydata-sphinx-theme.js?digest=365ca57ee442770a23c6"></script>
+
+  <footer class="bd-footer">
+  </footer>
+  </body>
+</html>
