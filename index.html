@@ -1,0 +1,572 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="./" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>spycon: A toolbox for benchmarking neuronal connectivity inference &#8212; spycon  documentation</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  <!--
+    this give us a css class that will be invisible only if js is disabled
+  -->
+  <noscript>
+    <style>
+      .pst-js-only { display: none !important; }
+
+    </style>
+  </noscript>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="_static/styles/theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+<link href="_static/styles/pydata-sphinx-theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=8f2a1f02" />
+    <link rel="stylesheet" type="text/css" href="_static/styles/sphinx-book-theme.css?v=a3416100" />
+  
+  <!-- So that users can add custom icons -->
+  <script src="_static/scripts/fontawesome.js?digest=8878045cc6db502f8baf"></script>
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
+<link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
+
+    <script src="_static/documentation_options.js?v=9eb32ce0"></script>
+    <script src="_static/doctools.js?v=9bcbadda"></script>
+    <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="_static/scripts/sphinx-book-theme.js?v=887ef09a"></script>
+    <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <script>window.MathJax = {"tex": {"inlineMath": [["$", "$"], ["\\(", "\\)"]], "processEscapes": true}, "options": {"ignoreHtmlClass": "tex2jax_ignore|mathjax_ignore|document", "processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
+    <script defer="defer" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'index';</script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="sPYcon Tutorial" href="notebooks/tutorial.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  <meta name="docsearch:version" content="" />
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <dialog id="pst-search-dialog">
+    
+<form class="bd-search d-flex align-items-center"
+      action="search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         placeholder="Search..."
+         aria-label="Search..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form>
+  </dialog>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+        
+      
+      <dialog id="pst-primary-sidebar-modal"></dialog>
+      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+    
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="#">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="_static/spycon_logo.png" class="logo__image only-light" alt="spycon  documentation - Home"/>
+    <img src="_static/spycon_logo.png" class="logo__image only-dark pst-js-only" alt="spycon  documentation - Home"/>
+  
+  
+</a></div>
+        <div class="sidebar-primary-item">
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button></div>
+        <div class="sidebar-primary-item"><nav class="bd-links bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item navbar-nav active">
+        <p aria-level="2" class="caption" role="heading"><span class="caption-text">Examples:</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="notebooks/tutorial.html">sPYcon Tutorial</a></li>
+<li class="toctree-l1"><a class="reference internal" href="notebooks/create_test.html">Creating a spycon test</a></li>
+<li class="toctree-l1"><a class="reference internal" href="notebooks/create_spycon_method.html">Create your own Connectivity method</a></li>
+<li class="toctree-l1"><a class="reference internal" href="notebooks/use_eann.html">Use eANN</a></li>
+<li class="toctree-l1"><a class="reference internal" href="notebooks/train_eann.html">Train your own ensemble network</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">API:</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="utilities.html">spycon utilities</a></li>
+<li class="toctree-l1"><a class="reference internal" href="inference.html">Inference algorithms</a></li>
+</ul>
+
+    </div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+      <div class="sidebar-primary-item">
+<div id="ethical-ad-placement"
+      class="flat"
+      data-ea-publisher="readthedocs"
+      data-ea-type="readthedocs-sidebar"
+      data-ea-manual="true">
+</div></div>
+  </div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+
+<div class="sbt-scroll-pixel-helper"></div>
+
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item"><button class="sidebar-toggle primary-toggle btn btn-sm" title="Toggle primary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <span class="fa-solid fa-bars"></span>
+</button></div>
+      
+    </div>
+  
+  
+    <div class="header-article-items__end">
+      
+        <div class="header-article-item">
+
+<div class="article-header-buttons">
+
+
+<a href="https://github.com/christiando/spycon" target="_blank"
+   class="btn btn-sm btn-source-repository-button"
+   title="Source repository"
+   data-bs-placement="bottom" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fab fa-github"></i>
+  </span>
+
+</a>
+
+
+
+
+
+
+<div class="dropdown dropdown-download-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Download this page">
+    <i class="fas fa-download"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="_sources/index.rst" target="_blank"
+   class="btn btn-sm btn-download-source-button dropdown-item"
+   title="Download source file"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file"></i>
+  </span>
+<span class="btn__text-container">.rst</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li>
+<button onclick="window.print()"
+  class="btn btn-sm btn-download-pdf-button dropdown-item"
+  title="Print to PDF"
+  data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file-pdf"></i>
+  </span>
+<span class="btn__text-container">.pdf</span>
+</button>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+<button onclick="toggleFullScreen()"
+  class="btn btn-sm btn-fullscreen-button"
+  title="Fullscreen mode"
+  data-bs-placement="bottom" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-expand"></i>
+  </span>
+
+</button>
+
+
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button>
+
+
+<button class="btn btn-sm pst-navbar-icon search-button search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+</button>
+<button class="sidebar-toggle secondary-toggle btn btn-sm" title="Toggle secondary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="fa-solid fa-list"></span>
+</button>
+</div></div>
+      
+    </div>
+  
+</div>
+</div>
+              
+              
+
+<div id="jb-print-docs-body" class="onlyprint">
+    <h1>spycon: A toolbox for benchmarking neuronal connectivity inference</h1>
+    <!-- Table of contents -->
+    <div id="print-main-content">
+        <div id="jb-print-toc">
+            
+            <div>
+                <h2> Contents </h2>
+            </div>
+            <nav aria-label="Page">
+                <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#introduction">Introduction</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#quickstart">Quickstart</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#installation">Installation</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#implemented-algorithms">Implemented algorithms</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#using-you-own-data">Using you own data</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#creating-your-own-test">Creating your own test</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#contributing-your-own-algorithm">Contributing your own algorithm</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#citation">Citation</a></li>
+</ul>
+            </nav>
+        </div>
+    </div>
+</div>
+
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <p align="center">
+  <img src="_static/spycon_logo.png" />
+</p>
+<section class="tex2jax_ignore mathjax_ignore" id="spycon-a-toolbox-for-benchmarking-neuronal-connectivity-inference">
+<h1>spycon: A toolbox for benchmarking neuronal connectivity inference<a class="headerlink" href="#spycon-a-toolbox-for-benchmarking-neuronal-connectivity-inference" title="Link to this heading">#</a></h1>
+<section id="introduction">
+<h2>Introduction<a class="headerlink" href="#introduction" title="Link to this heading">#</a></h2>
+<p>Numerous methods have been proposed that attempt to infer neuronal connectivity from parallel recorded spike trains.
+Here we provide the <code class="docutils literal notranslate"><span class="pre">spycon</span></code> framework, that aims at making a comparable framework among these methods. We provide several
+connectivity inference algorithms, and a template, such that costum algorithms can be intergrated into <code class="docutils literal notranslate"><span class="pre">spycon</span></code>. <code class="docutils literal notranslate"><span class="pre">spycon</span></code>
+then provides a unified output of the methods, that methods can be benchmarked on different datasets.</p>
+<p><a class="reference internal" href="#quickstart"><span class="xref myst"><strong>Quickstart</strong></span></a> | <a class="reference internal" href="#installation"><span class="xref myst"><strong>Install guide</strong></span></a> | <a class="reference internal" href="#citation"><span class="xref myst"><strong>Citing</strong></span></a> | <a class="reference external" href="https://christiando.github.io/spycon/"><strong>Documentation</strong></a></p>
+</section>
+<section id="quickstart">
+<h2>Quickstart<a class="headerlink" href="#quickstart" title="Link to this heading">#</a></h2>
+<p>You can either install <code class="docutils literal notranslate"><span class="pre">spycon</span></code> locally. If you just want to try it out quickly, you can also start and interactive
+session on <a class="reference external" href="https://renkulab.io/projects/christian.donner/spycon">renku</a> and directly start coding. Check the <code class="docutils literal notranslate"><span class="pre">notebooks</span></code> folder for some examples.</p>
+<p>Here is a simple example, that shows how easy it is to do connectivity inference.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">spycon.coninf</span><span class="w"> </span><span class="kn">import</span> <span class="n">Smoothed_CCG</span>
+
+<span class="n">times</span><span class="p">,</span> <span class="n">ids</span> <span class="o">=</span> <span class="o">...</span>                           <span class="c1"># Load your data as simple 1D numpy arrays</span>
+<span class="n">spycon_method</span> <span class="o">=</span> <span class="n">Smoothed_CCG</span><span class="p">()</span>             <span class="c1"># Initialize your method with default parameters</span>
+<span class="n">spycon_result</span> <span class="o">=</span> <span class="n">spycon_method</span><span class="o">.</span><span class="n">infer_connectivity</span><span class="p">(</span><span class="n">times</span><span class="p">,</span> <span class="n">ids</span><span class="p">)</span> <span class="c1"># Run inference</span>
+<span class="n">spycon_result</span><span class="o">.</span><span class="n">draw_graph</span><span class="p">()</span>                 <span class="c1"># Draw inferred graph</span>
+</pre></div>
+</div>
+</section>
+<section id="installation">
+<h2>Installation<a class="headerlink" href="#installation" title="Link to this heading">#</a></h2>
+<p>Clone the repository into a directory and go into the folder. Just do the following</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>pip<span class="w"> </span>install<span class="w"> </span>git+https://github.com/christiando/spycon
+</pre></div>
+</div>
+<p>For code development do</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>git<span class="w"> </span>clone<span class="w"> </span>https://github.com/christiando/spycon.git
+<span class="nb">cd</span><span class="w"> </span>spycon/
+pip<span class="w"> </span>install<span class="w"> </span>-r<span class="w"> </span>requirements.txt
+pip<span class="w"> </span>install<span class="w"> </span>-e<span class="w"> </span>.
+</pre></div>
+</div>
+</section>
+<section id="implemented-algorithms">
+<h2>Implemented algorithms<a class="headerlink" href="#implemented-algorithms" title="Link to this heading">#</a></h2>
+<p>All the algorithms that are discussed in our paper are implemented in this toolbox.</p>
+<div class="pst-scrollable-table-container"><table class="table">
+<thead>
+<tr class="row-odd"><th class="head"><p>Method</p></th>
+<th class="head"><p>Abbrevation</p></th>
+<th class="head"><p>Remarks</p></th>
+<th class="head"><p>Reference</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><a class="reference download internal" download="" href="_downloads/721d8a4dc6d90118aa4fb59b030e4479/sci_ci.py"><span class="xref download myst"><code class="docutils literal notranslate"><span class="pre">CoincidenceIndex</span></code></span></a></p></td>
+<td><p>CI</p></td>
+<td><p>Assess significance of coincidence index via surrogate data</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference download internal" download="" href="_downloads/c382a35977e53a6d8217800b034a2e35/sci_sccg.py"><span class="xref download myst"><code class="docutils literal notranslate"><span class="pre">Smoothed_CCG</span></code></span></a></p></td>
+<td><p>sCCG</p></td>
+<td><p>Assess significance of peaks of CCG by comparing to smoothed CCG</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference download internal" download="" href="_downloads/89df51ebb7903b3381ed7b0011b66423/sci_dsttc.py"><span class="xref download myst"><code class="docutils literal notranslate"><span class="pre">directed_STTC</span></code></span></a></p></td>
+<td><p>dSTTC</p></td>
+<td><p>Assess signficance of directed STTC via surrogate data</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference download internal" download="" href="_downloads/358838ad359409356bc9636d3c6a1f01/sci_glmcc.py"><span class="xref download myst"><code class="docutils literal notranslate"><span class="pre">GLMCC</span></code></span></a></p></td>
+<td><p>GLMCC</p></td>
+<td><p>Assess significance of peaks of CCG via parametric GLM fit</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference download internal" download="" href="_downloads/ec1fa61528b9b494344f3f139939f5c0/sci_idtxl.py"><span class="xref download myst"><code class="docutils literal notranslate"><span class="pre">TE_IDTXL</span></code></span></a></p></td>
+<td><p>TE</p></td>
+<td><p>Assess significance of transfer entropy via surrogate data</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference download internal" download="" href="_downloads/01b600e7d7f8adcc9108219138b82db0/sci_glmpp.py"><span class="xref download myst"><code class="docutils literal notranslate"><span class="pre">GLMPP</span></code></span></a></p></td>
+<td><p>GLMPP</p></td>
+<td><p>Assess significance of GLM coupling by posterior approximation</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference download internal" download="" href="_downloads/c228ca454336855d221d3c01004d8c2a/sci_ensemble.py"><span class="xref download myst"><code class="docutils literal notranslate"><span class="pre">NNEnsmble</span></code></span></a></p></td>
+<td><p>eANN</p></td>
+<td><p>Predict (type of) connection based on the outcome of other methods</p></td>
+<td><p></p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<p><strong>Disclaimer</strong>: <code class="docutils literal notranslate"><span class="pre">NNEnsemble</span></code> is a supervised method. In our paper, we carefully designed training data, that is approximately close to the experimental conditions. If your data varies from this, performance is expected to degrade. Furthermore, each algorithm has different parameters, and depending on your dataset the default one might not be appropriate. Some benchmarking on some surrogate datasets, that resemble the regime of your experimental data will be helpful to assess this.</p>
+</section>
+<section id="using-you-own-data">
+<h2>Using you own data<a class="headerlink" href="#using-you-own-data" title="Link to this heading">#</a></h2>
+<p><code class="docutils literal notranslate"><span class="pre">spycon</span></code> aims at keeping the bar low for using the connectivity algorithms for your data. We voluntarily choose, that it is enough to provide the data in the form of two simple <code class="docutils literal notranslate"><span class="pre">numpy</span></code> arrays, one containing the spike times (in seconds), and one the unit IDs. Note, that this makes the code very simple to use, but gives the user more responsibility of checking, that the data is in appropriately scaled, ordered, etc, compared to more sophisticated data formats.</p>
+</section>
+<section id="creating-your-own-test">
+<h2>Creating your own test<a class="headerlink" href="#creating-your-own-test" title="Link to this heading">#</a></h2>
+<p><code class="docutils literal notranslate"><span class="pre">spycon</span></code> contains some functionalities to make benchmarking easier on labeled data. If you have spiking data &amp; information about the underlying connectivity, you can create an <a class="reference download internal" download="" href="_downloads/f7d76ad1e425234117b4b662f34f56d4/spycon_tests.py"><span class="xref download myst"><code class="docutils literal notranslate"><span class="pre">ConnectivityTest</span></code></span></a>. On these objects, all implemented connectivity inference methods can be run, and provide you with some performance metrics, for benchmarking and allowing you to decide for the appropriate algorithm.</p>
+</section>
+<section id="contributing-your-own-algorithm">
+<h2>Contributing your own algorithm<a class="headerlink" href="#contributing-your-own-algorithm" title="Link to this heading">#</a></h2>
+<p>If you want to use other methods than the one implemented look at the <a class="reference download internal" download="" href="_downloads/0c9ddf1e114738d15e94808b31b921cb/sci_template.py"><span class="xref download myst"><code class="docutils literal notranslate"><span class="pre">sci_template.py</span></code></span></a></p>
+</section>
+<section id="citation">
+<h2>Citation<a class="headerlink" href="#citation" title="Link to this heading">#</a></h2>
+</section>
+</section>
+<div class="toctree-wrapper compound">
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Examples:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="notebooks/tutorial.html">sPYcon Tutorial</a></li>
+<li class="toctree-l1"><a class="reference internal" href="notebooks/create_test.html">Creating a spycon test</a></li>
+<li class="toctree-l1"><a class="reference internal" href="notebooks/create_spycon_method.html">Create your own Connectivity method</a></li>
+<li class="toctree-l1"><a class="reference internal" href="notebooks/use_eann.html">Use eANN</a></li>
+<li class="toctree-l1"><a class="reference internal" href="notebooks/train_eann.html">Train your own ensemble network</a></li>
+</ul>
+</div>
+<div class="toctree-wrapper compound">
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">API:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="utilities.html">spycon utilities</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="utilities.html#spycon.spycon_inference.SpikeConnectivityInference"><code class="docutils literal notranslate"><span class="pre">SpikeConnectivityInference</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="utilities.html#spycon.spycon_result.SpikeConnectivityResult"><code class="docutils literal notranslate"><span class="pre">SpikeConnectivityResult</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="utilities.html#spycon.spycon_result.load_connectivity_result"><code class="docutils literal notranslate"><span class="pre">load_connectivity_result()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="inference.html">Inference algorithms</a></li>
+</ul>
+</div>
+
+
+                </article>
+              
+
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+    <a class="right-next"
+       href="notebooks/tutorial.html"
+       title="next page">
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title">sPYcon Tutorial</p>
+      </div>
+      <i class="fa-solid fa-angle-right"></i>
+    </a>
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+                <dialog id="pst-secondary-sidebar-modal"></dialog>
+                <div id="pst-secondary-sidebar" class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+  <div class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> Contents
+  </div>
+  <nav class="bd-toc-nav page-toc">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#introduction">Introduction</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#quickstart">Quickstart</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#installation">Installation</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#implemented-algorithms">Implemented algorithms</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#using-you-own-data">Using you own data</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#creating-your-own-test">Creating your own test</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#contributing-your-own-algorithm">Contributing your own algorithm</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#citation">Citation</a></li>
+</ul>
+  </nav></div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+<div class="bd-footer-content__inner container">
+  
+  <div class="footer-item">
+    
+<p class="component-author">
+By Christian Donner
+</p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+
+  <p class="copyright">
+    
+      © Copyright 2023, Christian Donner.
+      <br/>
+    
+  </p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+</div>
+          </footer>
+        
+
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script defer src="_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf"></script>
+<script defer src="_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf"></script>
+
+  <footer class="bd-footer">
+  </footer>
+  </body>
+</html>
