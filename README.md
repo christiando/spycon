@@ -9,7 +9,7 @@
 Numerous methods have been proposed that attempt to infer neuronal connectivity from parallel recorded spike trains. 
 Here we provide the `spycon` framework, that aims at making a comparable framework among these methods. We provide several 
 connectivity inference algorithms, and a template, such that costum algorithms can be intergrated into `spycon`. `spycon`
-then provides a unified output of the methods, that methods can be benchmarked on different datasets.
+then provides a unified output of the methods, that methods can be benchmarked on different datasets. For details check out our [PLoS CB paper](https://doi.org/10.1371/journal.pcbi.1011964).
 
 [**Quickstart**](#quickstart) | [**Install guide**](#installation) | [**Citing**](#citation) | [**Documentation**](https://christiando.github.io/spycon/)
 
@@ -75,3 +75,20 @@ If you want to use other methods than the one implemented look at the [`sci_temp
 
 ## Citation
 
+If you use the code or data, please cite our paper
+
+```
+@article{ensemble24,
+    doi = {10.1371/journal.pcbi.1011964},
+    author = {Donner, Christian AND Bartram, Julian AND Hornauer, Philipp AND Kim, Taehoon AND Roqueiro, Damian AND Hierlemann, Andreas AND Obozinski, Guillaume AND Schröter, Manuel},
+    journal = {PLOS Computational Biology},
+    publisher = {Public Library of Science},
+    title = {Ensemble learning and ground-truth validation of synaptic connectivity inferred from spike trains},
+    year = {2024},
+    month = {04},
+    volume = {20},
+    url = {https://doi.org/10.1371/journal.pcbi.1011964},
+    pages = {1-25},
+    number = {4},
+}
+```
